@@ -1,0 +1,185 @@
+﻿<UserControl x:Class="SenNotes.Views.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="clr-namespace:SenNotes.Behaviors"
+             xmlns:components="clr-namespace:SenNotes.Components"
+             xmlns:converter="clr-namespace:SenNotes.Converter"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:local="clr-namespace:SenNotes.Views"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:model="clr-namespace:SenNotes.Common.Models;assembly=SenNotes.Common"
+             xmlns:vm="clr-namespace:SenNotes.ViewModels"
+             d:DataContext="{d:DesignInstance vm:MainViewModel,
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="600"
+             d:DesignWidth="400"
+             AllowDrop="True"
+             mc:Ignorable="d">
+
+
+  <i:Interaction.Triggers>
+    <i:EventTrigger EventName="DragEnter">
+      <i:ChangePropertyAction PropertyName="Visibility"
+                              TargetObject="{Binding ElementName=DropFilePanel}"
+                              Value="Visible" />
+    </i:EventTrigger>
+
+    <i:EventTrigger EventName="DragLeave">
+      <i:ChangePropertyAction PropertyName="Visibility"
+                              TargetObject="{Binding ElementName=DropFilePanel}"
+                              Value="Hidden" />
+    </i:EventTrigger>
+  </i:Interaction.Triggers>
+
+  <UserControl.Resources>
+    <converter:TaskStatusConverter x:Key="TaskStatusConverter" />
+    <converter:ColorBrushConverter x:Key="ColorBrushConverter" />
+  </UserControl.Resources>
+  <Grid>
+    <!-- 拖入时显示 -->
+    <Grid x:Name="DropFilePanel"
+          Background="Purple"
+          Visibility="Hidden"
+          ZIndex="999">
+      <i:Interaction.Behaviors>
+        <b:FileDragBehavior Files="{Binding FilePaths, Mode=OneWayToSource}" />
+      </i:Interaction.Behaviors>
+      <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Drop">
+          <i:ChangePropertyAction PropertyName="Visibility"
+                                  TargetObject="{Binding ElementName=DropFilePanel}"
+                                  Value="Hidden" />
+        </i:EventTrigger>
+      </i:Interaction.Triggers>
+      <TextBlock HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 FontSize="20"
+                 FontWeight="Bold"
+                 Foreground="White"
+                 Text="拖入文件到此处" />
+      <Rectangle Width="200"
+                 Height="100"
+                 RadiusX="10"
+                 RadiusY="10"
+                 Stroke="White"
+                 StrokeDashArray="3,4"
+                 StrokeThickness="2" />
+    </Grid>
+
+    <!-- 主体内容 -->
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <Grid Grid.Row="0" Margin="10">
+        <ScrollViewer VerticalScrollBarVisibility="Hidden">
+          <ItemsControl ItemsSource="{Binding Tasks}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate DataType="{x:Type model:TaskModel}">
+                <Border Margin="0,5" Background="{Binding BgColor, ElementName=Card, Converter={StaticResource ColorBrushConverter}}">
+                  <StackPanel>
+                    <DockPanel LastChildFill="False">
+                      <Button Command="{Binding DataContext.UpdateTaskCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                              CommandParameter="{Binding}"
+                              DockPanel.Dock="Right"
+                              Foreground="White"
+                              Style="{StaticResource MaterialDesignFlatButton}">
+                        <md:PackIcon Kind="Gear" />
+                      </Button>
+                      <TextBlock Margin="10,0"
+                                 VerticalAlignment="Center"
+                                 FontSize="16"
+                                 FontWeight="Thin"
+                                 Foreground="White"
+                                 Text="{Binding Status, Converter={StaticResource TaskStatusConverter}}" />
+                      <Button Command="{Binding DataContext.RemoveTaskCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                              CommandParameter="{Binding}"
+                              DockPanel.Dock="Right"
+                              Foreground="White"
+                              Style="{StaticResource MaterialDesignFlatButton}">
+                        <md:PackIcon Kind="Close" />
+                      </Button>
+                    </DockPanel>
+                    <components:TaskCard x:Name="Card" TaskModel="{Binding}" />
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
+      <Grid Grid.Row="1" Margin="10">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Margin="0,10">
+          <Button Command="{Binding SelectFilesCommand}" Style="{StaticResource MaterialDesignOutlinedButton}">
+
+            <Button.Content>
+              <StackPanel Orientation="Horizontal">
+                <md:PackIcon Kind="Plus" />
+                <TextBlock Text="选择文件" />
+              </StackPanel>
+            </Button.Content>
+          </Button>
+          <ItemsControl ItemsSource="{Binding FileSources}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <components:FileBadge VerticalAlignment="Center" FileSource="{Binding}" />
+                  <Button Grid.Column="1"
+                          Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                          CommandParameter="{Binding}"
+                          Style="{StaticResource MaterialDesignFlatButton}">
+                    <md:PackIcon Kind="Close" />
+                  </Button>
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+        </StackPanel>
+        <Grid Grid.Row="1">
+
+          <!-- 输入框 -->
+          <TextBox MaxHeight="100"
+                   Padding="0,0,60,0"
+                   VerticalContentAlignment="Center"
+                   md:HintAssist.Hint="文字信息"
+                   AcceptsReturn="True"
+                   IsEnabled="{Binding IsEnable}"
+                   Style="{StaticResource MaterialDesignFilledTextBox}"
+                   Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"
+                   TextWrapping="Wrap"
+                   VerticalScrollBarVisibility="Auto" />
+          <Button Margin="-50,0,0,0"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Center"
+                  Command="{Binding EnterKeyDownCommand}"
+                  Style="{StaticResource MaterialDesignIconButton}">
+            <md:PackIcon Kind="Send" />
+          </Button>
+        </Grid>
+
+      </Grid>
+    </Grid>
+  </Grid>
+</UserControl>

@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="DocumentFormat.OpenXml" />
+      <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" />
+      <PackageReference Include="Newtonsoft.Json" />
+      <PackageReference Include="PdfPig" />
+      <PackageReference Include="Tesseract" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="OCR\chi_sim.traineddata">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+</Project>

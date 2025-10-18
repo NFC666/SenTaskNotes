@@ -1,0 +1,63 @@
+﻿<Window x:Class="SenNotes.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:SenNotes.Views"
+        xmlns:comp="clr-namespace:SenNotes.Components"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:vm="clr-namespace:SenNotes.ViewModels"
+        xmlns:model="clr-namespace:SenNotes.Common.Models;assembly=SenNotes.Common"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance vm:SettingsWindowViewModel}"
+        Title="SettingsWindow" Height="300" Width="450">
+
+  <Window.Resources>
+    <Style TargetType="TextBlock">
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+  </Window.Resources>
+
+  <Grid Background="DarkViolet">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <Border Margin="10">
+      <StackPanel>
+        <TextBlock Text="设置" FontSize="25" />
+        <Border BorderBrush="White" BorderThickness="1" Margin="0,10" Width="100" HorizontalAlignment="Left"/>
+        
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="已有设置" VerticalAlignment="Center"/>
+          <ComboBox 
+            Margin="10,0"
+            ItemsSource="{Binding SettingsModels}"
+            SelectedItem="{Binding AiSettings, Mode=TwoWay}"
+            DisplayMemberPath="Id"
+            Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+          </ComboBox>
+        </StackPanel>
+
+        <comp:NoStyleTextBox
+          Text="{Binding AiSettings.ApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+          Header="Token：" />
+
+        <comp:NoStyleTextBox
+          Margin="0,10"
+          Text="{Binding AiSettings.BaseUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+          Header="基础Url：" />
+      </StackPanel>
+    </Border>
+
+    <DockPanel Grid.Row="1" LastChildFill="False">
+      <Button
+        Command="{Binding SetHttpFactoryInfoCommand}"
+        DockPanel.Dock="Right"
+        Style="{StaticResource MaterialDesignFlatButton}">
+        <md:PackIcon Kind="Check" Foreground="White"/>
+      </Button>
+    </DockPanel>
+  </Grid>
+</Window>
