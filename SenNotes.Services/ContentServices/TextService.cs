@@ -1,6 +1,6 @@
 ﻿using SenNotes.Services.IServices;
 
-namespace SenNotes.Services
+namespace SenNotes.Services.ContentServices
 {
     public class TextService : IContentService
     {

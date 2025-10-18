@@ -9,6 +9,7 @@ using SenNotes.Common.Global;
 using SenNotes.Common.Helpers;
 using SenNotes.Common.Models;
 using SenNotes.Repository.Factories;
+using SenNotes.Services.ContentServices;
 using SenNotes.Services.IServices;
 
 namespace SenNotes.Services

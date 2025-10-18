@@ -2,7 +2,7 @@
 
 using Tesseract;
 
-namespace SenNotes.Services
+namespace SenNotes.Services.ContentServices
 {
     public class ImgService : IContentService
     {

@@ -4,7 +4,7 @@ using SenNotes.Services.IServices;
 
 using UglyToad.PdfPig;
 
-namespace SenNotes.Services
+namespace SenNotes.Services.ContentServices
 {
     public class PdfService : IContentService
     {

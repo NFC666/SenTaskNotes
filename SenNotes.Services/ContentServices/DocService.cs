@@ -1,12 +1,10 @@
 ﻿using System.Text;
 
-using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Packaging;
 
 using SenNotes.Services.IServices;
 
-
-namespace SenNotes.Services
+namespace SenNotes.Services.ContentServices
 {
     public class DocService : IContentService
     {
