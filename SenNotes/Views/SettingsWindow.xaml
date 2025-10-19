@@ -8,46 +8,43 @@
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:vm="clr-namespace:SenNotes.ViewModels"
         xmlns:model="clr-namespace:SenNotes.Common.Models;assembly=SenNotes.Common"
+        xmlns:converter="clr-namespace:SenNotes.Converter"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance vm:SettingsWindowViewModel}"
         Title="SettingsWindow" Height="300" Width="450">
 
   <Window.Resources>
     <Style TargetType="TextBlock">
-      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="Foreground" Value="White" />
     </Style>
+    <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
   </Window.Resources>
 
   <Grid Background="DarkViolet">
     <Grid.RowDefinitions>
-      <RowDefinition Height="*"/>
-      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
     <Border Margin="10">
       <StackPanel>
         <TextBlock Text="设置" FontSize="25" />
-        <Border BorderBrush="White" BorderThickness="1" Margin="0,10" Width="100" HorizontalAlignment="Left"/>
-        
-        <StackPanel Orientation="Horizontal">
-          <TextBlock Text="已有设置" VerticalAlignment="Center"/>
-          <ComboBox 
-            Margin="10,0"
-            ItemsSource="{Binding SettingsModels}"
-            SelectedItem="{Binding AiSettings, Mode=TwoWay}"
-            DisplayMemberPath="Id"
-            Style="{StaticResource MaterialDesignFloatingHintComboBox}">
-          </ComboBox>
+        <Border BorderBrush="White" BorderThickness="1" Margin="0,10" Width="100" HorizontalAlignment="Left" />
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <TextBlock Margin="0,10" FontSize="20" Text="开启自动配置"/>
+          <ToggleButton IsChecked="{Binding IsUseAutoSetting,Mode=TwoWay}"/>
         </StackPanel>
+        <StackPanel Visibility="{Binding IsUseAutoSetting
+        ,Converter={StaticResource BoolToVisibilityConverter},ConverterParameter=Invert}">
+          <comp:NoStyleTextBox
+            Text="{Binding AiSettings.ApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            Header="Token：" />
 
-        <comp:NoStyleTextBox
-          Text="{Binding AiSettings.ApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-          Header="Token：" />
-
-        <comp:NoStyleTextBox
-          Margin="0,10"
-          Text="{Binding AiSettings.BaseUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-          Header="基础Url：" />
+          <comp:NoStyleTextBox
+            Margin="0,10"
+            Text="{Binding AiSettings.BaseUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            Header="基础Url：" />
+        </StackPanel>
       </StackPanel>
     </Border>
 
@@ -56,7 +53,7 @@
         Command="{Binding SetHttpFactoryInfoCommand}"
         DockPanel.Dock="Right"
         Style="{StaticResource MaterialDesignFlatButton}">
-        <md:PackIcon Kind="Check" Foreground="White"/>
+        <md:PackIcon Kind="Check" Foreground="White" />
       </Button>
     </DockPanel>
   </Grid>

@@ -21,6 +21,9 @@ namespace SenNotes.ViewModels
         [ObservableProperty]
         private List<SettingModel> settingsModels = new();
 
+        [ObservableProperty] 
+        private bool _isUseAutoSetting = false;
+
         public SettingsWindowViewModel(ISettingsModelService settingsModelService)
         {
             _settingsModelService = settingsModelService;
@@ -49,6 +52,14 @@ namespace SenNotes.ViewModels
             if (AiSettings is null)
             {
                 MessageBox.Show("设置不能为空！");
+                return;
+            }
+
+            if (IsUseAutoSetting == true)
+            {
+                HttpFactory.ConfigClient("", "https://localhost:7217");
+                MessageBox.Show("设置成功");
+                WeakReferenceMessenger.Default.Send(new CloseSettingsWindow());
                 return;
             }
 

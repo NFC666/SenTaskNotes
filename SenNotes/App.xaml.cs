@@ -6,12 +6,16 @@ using Microsoft.Extensions.Hosting;
 using System.Windows;
 using System.Windows.Threading;
 
+using Microsoft.Win32;
+
 using SenNotes.Common.Global;
 using SenNotes.Managers;
 using SenNotes.Services;
 using SenNotes.Services.IServices;
 using SenNotes.ViewModels;
 using SenNotes.Views;
+
+using Serilog;
 
 using Application = System.Windows.Application;
 
@@ -27,12 +31,27 @@ public partial class App : Application
     [STAThread]
     private static void Main(string[] args)
     {
+        
         MainAsync(args).GetAwaiter().GetResult();
     }
 
     public App()
     {
-        Properties["AppName"] = "SenNotes";
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug() // 日志最低等级
+            .Enrich.FromLogContext() // 添加上下文信息
+            .WriteTo.Console() // 输出到控制台
+            .WriteTo.File("Logs\\log-.txt", rollingInterval: RollingInterval.Day) // 日志按天滚动
+            .CreateLogger();
+
+        Log.Information("应用程序启动");
+
+        // 捕获未处理异常
+        AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+        {
+            Log.Fatal(args.ExceptionObject as Exception, "未处理异常");
+            Log.CloseAndFlush();
+        };
     }
 
     private static async Task MainAsync(string[] args)
@@ -51,6 +70,12 @@ public partial class App : Application
 
 
         await host.StopAsync().ConfigureAwait(true);
+    }
+
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -93,4 +118,12 @@ public partial class App : Application
                     return new SnackbarMessageQueue(TimeSpan.FromSeconds(3.0), dispatcher);
                 });
             });
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        Log.Information("应用程序退出");
+        Log.CloseAndFlush();
+        base.OnExit(e);
+        
+    }
 }

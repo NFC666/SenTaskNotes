@@ -76,62 +76,6 @@ namespace SenNotes.Services
             return tasks;
             
         }
-        // /// <summary>
-        // /// 读取文本文件内容并分析
-        // /// </summary>
-        // /// <param name="filePath"></param>
-        // /// <param name="message"></param>
-        // /// <returns></returns>
-        // /// <exception cref="Exception"></exception>
-        // public async Task<string> InCloudFromFileSourcesAndMessageAsync(FileSource filePath,string message)
-        // {
-        //     if(filePath.FileType is not FileType.Text)
-        //         throw new Exception("请传入txt文件");
-        //     List<Message> contents = SetContent(filePath.FilePath, message, FileType.Text);
-        //     var payload = new ChatPayload
-        //     {
-        //         Models = "deepseek-ai/DeepSeek-V3.2-Exp",
-        //         Messages = contents
-        //     };
-        //     var requestBody = JsonConvert.SerializeObject(payload);
-        //     
-        //     var resp = await _httpClient
-        //         .PostAsJsonAsync("chat/completions", payload);
-        //     return await resp.Content.ReadAsStringAsync();
-        //     
-        // }
-        //
-        // public async Task<string> InCloudTaskFromDocxFIle(FileSource filePath, string message)
-        // {
-        //     if(filePath.FileType is not FileType.Doc)
-        //         throw new Exception("请传入docx文件");
-        //     List<Message> contents = SetContent(filePath.FilePath, message, FileType.Doc);
-        //     var payload = new ChatPayload
-        //     {
-        //         Models = "deepseek-ai/DeepSeek-V3.2-Exp",
-        //         Messages = contents
-        //     };
-        //     var requestBody = JsonConvert.SerializeObject(payload);
-        //     
-        //     var resp = await _httpClient
-        //         .PostAsJsonAsync("chat/completions", payload);
-        //     return await resp.Content.ReadAsStringAsync();
-        // }
-        //
-        // public async Task<string> InCloudTaskFromImgFIle(FileSource filePath, string message)
-        // {
-        //     List<Message> contents = SetContent(filePath.FilePath, message, filePath.FileType);
-        //     var payload = new ChatPayload
-        //     {
-        //         Models = "deepseek-ai/DeepSeek-V3.2-Exp",
-        //         Messages = contents
-        //     };
-        //     var requestBody = JsonConvert.SerializeObject(payload);
-        //     
-        //     var resp = await _httpClient
-        //         .PostAsJsonAsync("chat/completions", payload);
-        //     return await resp.Content.ReadAsStringAsync();
-        // }
 
         /// <summary>
         /// 获取文件内容并且由AI解析

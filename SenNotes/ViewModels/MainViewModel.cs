@@ -1,19 +1,14 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Text.RegularExpressions;
-using System.Timers;
 using System.Windows;
-using System.Windows.Threading;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
+
+
 using Microsoft.Extensions.DependencyInjection;
 
-using Newtonsoft.Json;
-
-using SenNotes.Common.Helpers;
 using SenNotes.Common.Messages;
 using SenNotes.Common.Models;
 using SenNotes.Extensions;
@@ -22,17 +17,16 @@ using SenNotes.Services;
 using SenNotes.Services.IServices;
 using SenNotes.Views;
 
-using DataFormats = System.Windows.DataFormats;
-using DragDropEffects = System.Windows.DragDropEffects;
-using DragEventArgs = System.Windows.DragEventArgs;
+using Serilog;
+
 using MessageBox = System.Windows.MessageBox;
 using TaskStatus = SenNotes.Common.Models.TaskStatus;
-using Timer = System.Timers.Timer;
 
 namespace SenNotes.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
+
         [ObservableProperty] private bool _isEnable = true;
         [ObservableProperty] private bool _isLoading = false;
         [ObservableProperty] private string[]? _filePaths;
@@ -57,10 +51,10 @@ namespace SenNotes.ViewModels
             ITaskModelService taskModelService
             , ToastService toastService)
         {
+            Log.Information("MainViewModel启动了");
             _taskModelService = taskModelService;
             _toastService = toastService;
             _ = InitAsync();
-
             WeakReferenceMessenger.Default.Register<TaskHasUpdateMessage>(this
                 , async (_, _) => await InitAsync());
         }
@@ -68,6 +62,7 @@ namespace SenNotes.ViewModels
 
         private async Task InitAsync()
         {
+            Log.Information("InitAsync开始执行");
             Tasks.Clear();
             try
             {
@@ -77,6 +72,7 @@ namespace SenNotes.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                Log.Error(ex.Message);
             }
             finally
             {
@@ -157,6 +153,7 @@ namespace SenNotes.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show("删除文件出现错误：" + ex.Message);
+                Log.Error(ex.Message);
             }
         }
 
@@ -180,6 +177,7 @@ namespace SenNotes.ViewModels
             }
             catch (Exception ex)
             {
+                Log.Error("分析结果出错！" + ex.Message + "\n可以尝试重新分析");
                 MessageBox.Show("分析结果出错！" + ex.Message + "\n可以尝试重新分析");
             }
         }
@@ -213,6 +211,7 @@ namespace SenNotes.ViewModels
             }
             catch (Exception ex)
             {
+                Log.Error("删除任务失败" + ex.Message);
                 MessageBox.Show("删除任务失败" + ex.Message);
             }
         }
